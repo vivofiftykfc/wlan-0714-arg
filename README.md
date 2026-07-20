@@ -60,3 +60,7 @@ npm test
 6. 在注销、公开和接收交接之间作出选择。
 
 仓库不在 README 中公开完整答案，具体逻辑可在源代码中审阅。
+
+## 相关项目
+
+[ARG Toolbox](https://github.com/vivofiftykfc/arg-toolbox) 是独立的通用创作工具仓库，本项目只保留《待注销用户》成品。
