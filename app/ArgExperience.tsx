@@ -62,7 +62,8 @@ export default function ArgExperience() {
 
   useEffect(() => {
     const saved = localStorage.getItem("wlan0714-save");
-    if (saved) {
+    if (!saved) return;
+    const hydration = window.setTimeout(() => {
       try {
         const data = JSON.parse(saved);
         setStarted(Boolean(data.started));
@@ -73,7 +74,8 @@ export default function ArgExperience() {
         setEnding(data.ending || null);
         setLogs(data.logs || initialLogs);
       } catch {}
-    }
+    }, 0);
+    return () => window.clearTimeout(hydration);
   }, []);
 
   useEffect(() => {

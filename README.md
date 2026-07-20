@@ -1,98 +1,72 @@
-# vinext-starter
+# ARG Toolbox Lab
 
-A clean full-stack starter running on
-[vinext](https://github.com/cloudflare/vinext), with optional Cloudflare D1 and
-Drizzle support.
+一个已经可以完整通关的中文网页 ARG 原型，以及一套面向“故事文本 → 可玩调查体验”的 ARG 创作工具箱研究底座。
 
-## Prerequisites
+当前原型是《待注销用户｜WLAN-0714》：玩家接管一台隔离终端，在邮件、聊天、云盘、检索系统、便笺、证据板与审计日志之间交叉验证，找出一个死亡账号仍然在线的原因，并在三种都不完美的结局中作出选择。
 
-- Node.js `>=22.13.0`
+> 当前网页已按创作者要求从公网撤下。仓库默认保持私有，不提供公开试玩地址。
 
-## Quick Start
+## 已完成的可玩原型
+
+- 20–35 分钟单人流程
+- 模拟桌面与七个叙事应用
+- 邮件阅读、密码解锁、关键词检索、隐藏联系人等调查操作
+- 8 项证据收集与上下文提示
+- 本地自动存档
+- 3 个结局，可重置重玩
+- 移动端与桌面端响应式布局
+- 明确的虚构声明与内容边界
+
+## 研究与产品设计
+
+- [中文互联网 ARG 表达手法调研](docs/ARG-EXPRESSION-RESEARCH.md)
+- [开箱即用 ARG 工具箱规格](docs/ARG-TOOLBOX-SPEC.md)
+- [作品与手法观察矩阵](docs/OBSERVATION-MATRIX.csv)
+- [最小故事输入示例](docs/story-input.example.yaml)
+
+研究的核心判断是：创作者不应该从“我要做一个聊天界面”开始，而应先给出绝对真相、角色知识边界、玩家初始知识和证据关系。工具箱负责把这些内容编译为可选择的叙事载体、谜题门槛、状态流和部署产物。
+
+## 本地运行
+
+环境要求：Node.js `>=22.13.0`
 
 ```bash
 npm install
 npm run dev
+```
+
+构建与验证：
+
+```bash
 npm run build
+npm test
+npm run lint
 ```
 
-This starter does not use `wrangler.jsonc`.
+## 技术结构
 
-## Included Shape
+- React 19 + TypeScript
+- Next.js 兼容目录结构
+- vinext / Vite
+- CSS 原生响应式界面
+- `localStorage` 单机进度保存
 
-- edit site code under `app/`
-- `.openai/hosting.json` declares optional Sites D1 and R2 bindings
-- `vite.config.ts` simulates declared bindings for local development
-- `db/schema.ts` starts intentionally empty
-- `examples/d1/` contains an optional D1 example surface
-- `drizzle.config.ts` supports local migration generation when needed
+主要文件：
 
-## Workspace Auth Headers
+- `app/ArgExperience.tsx`：完整剧情、交互状态与结局
+- `app/globals.css`：视觉系统与响应式布局
+- `docs/`：调研、产品规格、观察矩阵和输入范例
 
-OpenAI workspace sites can read the current user's email from
-`oai-authenticated-user-email`.
+## 工具箱路线
 
-SIWC-authenticated workspace sites may also receive
-`oai-authenticated-user-full-name` when the user's SIWC profile has a non-empty
-`name` claim. The full-name value is percent-encoded UTF-8 and is accompanied by
-`oai-authenticated-user-full-name-encoding: percent-encoded-utf-8`.
+1. **Story IR**：把上帝视角、角色所知、玩家所知转成真相图、知识图和证据图。
+2. **Renderer Registry**：按需组合邮件、聊天、论坛、云盘、地图、音频、监控、终端等表现模块。
+3. **Puzzle Compiler**：生成密码门、关键词检索、矛盾交叉验证、时间轴排序与多结局条件。
+4. **Authoring Studio**：让非程序创作者预览流程、检查死路、调整提示和替换美术。
+5. **Runtime & Ops**：同时支持一次性静态网页和按现实时间运营的完整 ARG。
 
-Treat the full name as optional and fall back to email when it is absent:
+详细模块边界和 MVP 计划见[工具箱规格](docs/ARG-TOOLBOX-SPEC.md)。
 
-```tsx
-import { headers } from "next/headers";
+## 状态
 
-export default async function Home() {
-  const requestHeaders = await headers();
-  const email = requestHeaders.get("oai-authenticated-user-email");
-  const encodedFullName = requestHeaders.get("oai-authenticated-user-full-name");
-  const fullName =
-    encodedFullName &&
-    requestHeaders.get("oai-authenticated-user-full-name-encoding") ===
-      "percent-encoded-utf-8"
-      ? decodeURIComponent(encodedFullName)
-      : null;
-
-  const displayName = fullName ?? email;
-  // ...
-}
-```
-
-## Optional Dispatch-Owned ChatGPT Sign-In
-
-Import the ready-to-use helpers from `app/chatgpt-auth.ts` when the site needs
-optional or required ChatGPT sign-in:
-
-- Use `getChatGPTUser()` for optional signed-in UI.
-- Use `requireChatGPTUser(returnTo)` for server-rendered pages that should send
-  anonymous visitors through Sign in with ChatGPT.
-- Use `chatGPTSignInPath(returnTo)` and `chatGPTSignOutPath(returnTo)` for
-  browser links or actions.
-- Pass a same-origin relative `returnTo` path for the destination after sign-in
-  or sign-out. The helper validates and safely encodes it.
-- Mark protected pages with `export const dynamic = "force-dynamic"` because
-  they depend on per-request identity headers.
-
-Dispatch owns `/signin-with-chatgpt`, `/signout-with-chatgpt`, `/callback`, the
-OAuth cookies, and identity header injection. Do not implement app routes for
-those reserved paths. Routes that do not import and call the helper remain
-anonymous-compatible.
-
-SIWC establishes identity only; it does not prove workspace membership. Use the
-Sites hosting platform's access policy controls for workspace-wide restrictions,
-or enforce explicit server-side membership or allowlist checks.
-
-Use SIWC for account pages, user-specific dashboards, saved records, and write
-actions tied to the current ChatGPT user. Leave public content anonymous.
-
-## Useful Commands
-
-- `npm run dev`: start local development
-- `npm run build`: verify the vinext build output
-- `npm test`: build the starter and verify its rendered loading skeleton
-- `npm run db:generate`: generate Drizzle migrations after schema changes
-
-## Learn More
-
-- [vinext Documentation](https://github.com/cloudflare/vinext)
-- [Drizzle D1 Guide](https://orm.drizzle.team/docs/get-started/d1-new)
+这是一个研究与原型仓库，不是已经发布的通用创作器。可玩作品已完成；工具箱目前完成了需求抽象、模块清单、输入协议和实施路线。
