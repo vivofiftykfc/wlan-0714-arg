@@ -64,3 +64,12 @@ npm test
 ## 相关项目
 
 [ARG Toolbox](https://github.com/vivofiftykfc/arg-toolbox) 是独立的通用创作工具仓库，本项目只保留《待注销用户》成品。
+
+## 授权与引用
+
+本项目采用双层授权：
+
+- 程序代码：AGPL-3.0-or-later
+- 剧情、角色、谜题文本、视觉设计和文档：CC BY-NC-SA 4.0
+
+转载、改编、展示或研究引用时必须标明作者 `vivofiftykfc`、作品标题、原仓库链接和修改情况；商业使用需要另行取得书面许可。完整边界见 [LICENSE-POLICY.md](LICENSE-POLICY.md)，推荐引用格式见 [NOTICE.md](NOTICE.md) 与 [CITATION.cff](CITATION.cff)。

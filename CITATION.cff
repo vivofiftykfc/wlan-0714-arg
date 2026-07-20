@@ -1,0 +1,13 @@
+cff-version: 1.2.0
+message: "If you use or discuss this project, please cite it using this metadata."
+title: "待注销用户｜WLAN-0714"
+type: software
+authors:
+  - name: "vivofiftykfc"
+version: 0.1.0
+date-released: 2026-07-20
+repository-code: "https://github.com/vivofiftykfc/wlan-0714-arg"
+url: "https://github.com/vivofiftykfc/wlan-0714-arg"
+license: AGPL-3.0-or-later
+abstract: "A complete playable Chinese web ARG about a deceased account that still logs in every night."
+
